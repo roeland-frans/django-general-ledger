@@ -1,0 +1,14 @@
+[tool.black]
+exclude = '''
+/(
+    \.direnv
+  | \.git
+  | \.idea
+  | \.vscode
+  | archive
+  | __pycache__
+  | .*egg-info
+)/
+'''
+line-length = 79
+target-version = ['py36']

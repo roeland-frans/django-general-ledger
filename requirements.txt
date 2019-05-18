@@ -1,0 +1,6 @@
+black
+fire
+pipdeptree
+pylint
+-e .
+-e ./src/ledger-base
