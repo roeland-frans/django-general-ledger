@@ -20,7 +20,6 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.sessions.models import Session
 from django.db import connection
 from django.db import models
-from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
 from pyotp import HOTP
 

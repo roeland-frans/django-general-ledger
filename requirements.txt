@@ -3,4 +3,5 @@ fire
 pipdeptree
 pylint
 -e .
+-e ./src/ledger
 -e ./src/ledger-base
