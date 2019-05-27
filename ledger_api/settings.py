@@ -15,9 +15,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "i9ozj1x%22v%18uuxbs#5kn!a*#b)rvwa#*tbq=_^sirhox*qd"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [".ledgerapi.io"]
+ALLOWED_HOSTS = [".ledgerapi.io", "localhost"]
 
 
 # Application definition
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "djmoney",
     # Ledger specific apps.
     "base",
+    "account",
 ]
 
 MIDDLEWARE = [
@@ -153,63 +154,27 @@ LOGGING = {
             "format": "%(asctime)s - %(name)s - %(levelname)s: %(message)s"
         }
     },
-    "filters": {
-        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
-        "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
-    },
     "handlers": {
-        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "simple",
-            "filters": ["require_debug_false"],
-        },
-        "console_debug": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-            "filters": ["require_debug_true"],
-        },
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "formatter": "simple",
-            "filename": "/var/log/tv/tv.log",
-        },
-        "file_debug": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "formatter": "simple",
-            "filename": "/var/log/tv/debug.log",
-        },
-        "mail_admins": {
-            "class": "django.utils.log.AdminEmailHandler",
-            "level": "ERROR",
-            "include_html": False,
-        },
-        "syslog": {
-            "level": "DEBUG",
-            "class": "logging.handlers.SysLogHandler",
-            "facility": "local1",
-            "formatter": "simple",
-            "address": "/dev/log",
-        },
+        }
     },
     "loggers": {
-        "": {"handlers": ["null"], "level": "INFO", "propagate": False},
+        "": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "django": {
-            "handlers": ["syslog", "file"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
         },
         "django.request": {
-            "handlers": ["syslog", "mail_admins"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": True,
         },
         LOGGER_ROOT_NAME: {
-            "handlers": ["syslog", "file", "file_debug"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
         },
