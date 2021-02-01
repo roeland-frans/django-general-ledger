@@ -14,6 +14,7 @@ setup(
         "django==2.2.1",
         "django-money==0.14.4",
         "djangorestframework==3.9.4",
+        "django-filter==2.1.0",
     ],
     include_package_data=True,
     zip_safe=False,
