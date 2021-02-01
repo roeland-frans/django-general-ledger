@@ -1,0 +1,59 @@
+{% extends 'backoffice/base/base_frontend.html' %}
+
+{% block body %}
+<div id="cl-wrapper" class="login-container">
+
+	<div class="middle-login">
+		<div class="block-flat">
+			<div class="header">
+				<h3 class="text-center"><img class="logo-img" src="{{ STATIC_URL }}backoffice/images/tv-logo.png" alt="logo"/></h3>
+			</div>
+			<div>
+				<form style="margin-bottom: 0px !important;" class="form-horizontal" action="" method="post" role="form">
+                    {% csrf_token %}
+                    <input type="hidden" name="this_is_the_login_form" value="1" />
+                    <input type="hidden" name="next" value="{{ next }}" />
+					<div class="content">
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-info">
+                               <i class="fa fa-info-circle sign"></i> {{ message }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <i class="fa fa-times-circle sign"></i> Incorrect username and password!
+                        </div>
+                        {% endif %}
+
+						<h4 class="title">Login Access</h4>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-user"></i></span>
+									<input type="text" placeholder="Username" id="username" name="username" class="form-control">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+									<input type="password" placeholder="Password" id="password" name="password" class="form-control">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="foot">
+						<button class="btn btn-primary" data-dismiss="modal" type="submit">Login</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="text-center out-links"><a href="#">&copy; {% now "Y" %} TradersVault (Pty) Ltd</a></div>
+	</div>
+
+</div>
+{% endblock %}

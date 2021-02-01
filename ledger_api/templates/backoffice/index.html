@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}backoffice/images/favicon.ico?v=3">
+
+    <title>TradersVault</title>
+    <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}backoffice/css/fonts.css" />-->
+
+    <!-- 3rd party styles -->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}backoffice/vendor/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}backoffice/vendor/components-font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}backoffice/vendor/angular-xeditable/dist/css/xeditable.css" />
+
+    <!-- Kendo Styles -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}backoffice/kendo/styles/kendo.common.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}backoffice/kendo/styles/kendo.rtl.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}backoffice/kendo/styles/kendo.default.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}backoffice/kendo/styles/kendo.dataviz.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}backoffice/kendo/styles/kendo.dataviz.default.min.css">
+
+    <!-- Backoffice styles -->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}backoffice/css/backoffice.css" />
+</head>
+
+<body>
+    <!-- ui-view container -->
+    <div data-ui-view="root" data-autoscroll="false"></div>
+
+    <script>
+        {% autoescape off %}
+            var appVariables = '{{ appVariables }}';
+        {% endautoescape %}
+    </script>
+
+    <script src="{{ STATIC_URL }}backoffice/js/rconfig.js"></script>
+    <script src="{{ STATIC_URL }}backoffice/vendor/requirejs/require.js" data-main="{{ STATIC_URL }}backoffice/js/backoffice.js"></script>
+</body>
+
+</html>

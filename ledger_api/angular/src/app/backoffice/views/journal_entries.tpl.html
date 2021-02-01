@@ -1,0 +1,84 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Journal Entry <small>{{ entry.ref_no }}</small> <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedEntry">List Journal Entries</a></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedEntry">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedEntry">
+            <div class="col-md-6">
+                <h4>Details</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Reference No:</strong></td>
+                        <td>{{ entry.ref_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ entry.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ entry.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Journal:</strong></td>
+                        <td>{{ entry.journal }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ entry.state }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row"  ng-if="selectedEntry">
+            <div class="col-md-12">
+                <div class="header">
+                    <h4>Journal Entry Lines</h4>
+                </div>
+                <div class="content">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><strong>Id</strong></th>
+                                <th><strong>Name</strong></th>
+                                <th><strong>Date Created</strong></th>
+                                <th><strong>Account</strong></th>
+                                <th class="text-right"><strong>Debit</strong></th>
+                                <th class="text-right"><strong>Credit</strong></th>
+                                <th class="text-right"><strong>Account Balance</strong></th>
+                                <th><strong>State</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="line in entryLines">
+                                <td><span data-toggle="tooltip" title="Ref No: {{ line.ref_no }}">{{ line.pk }}</span></td>
+                                <td>{{ line.name }}</td>
+                                <td>{{ line.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                                <td><a href="" ng-click="goToAccount(line.account_number)">{{ line.account_name }}</a></td>
+                                <td class="text-right">{{ line.debit }}</td>
+                                <td class="text-right">{{ line.credit }}</td>
+                                <td class="text-right">{{ line.account_balance }}</td>
+                                <td>{{ line.state }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+    </div>
+</div>

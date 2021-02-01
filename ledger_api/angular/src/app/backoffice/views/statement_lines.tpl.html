@@ -1,0 +1,169 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Statement Lines <small>{{ entry.ref_no }}</small>
+                        <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedLine">List Statement Lines</a>
+                        <div class="dropdown pull-right" ng-if="!selectedLine">
+                            <button class="btn btn-default" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a data-ui-sref="app.import_statement">Import Statement</a></li>
+                                <li><a data-ui-sref="app.auto_recon">Run Auto Recon</a></li>
+                            </ul>
+                        </div>
+
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedLine">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedLine">
+            <div class="col-md-6">
+                <h4>Details</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Internal Reference:</strong></td>
+                        <td>{{ line.uuid }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hash:</strong></td>
+                        <td>{{ line.hash }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bank Reference:</strong></td>
+                        <td>{{ line.ref_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ line.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Line Type:</strong></td>
+                        <td>{{ line.line_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amount:</strong></td>
+                        <td>{{ line.amount }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ line.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error Message:</strong></td>
+                        <td>{{ line.error_message || 'None' }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h4>Bank Account</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Bank Name:</strong></td>
+                        <td>{{ line.bank_account.bank }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Account Number:</strong></td>
+                        <td>{{ line.bank_account.acc_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Branch Code:</strong></td>
+                        <td>{{ line.bank_account.branch }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Journal:</strong></td>
+                        <td>{{ line.bank_account.journal }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internal Account:</strong></td>
+                        <td><a href="" ng-click="goToAccount(line.bank_account.account.acc_no)">{{ line.bank_account.account.acc_no }} - {{ line.bank_account.account.name }} ({{ line.bank_account.account.available_balance }})</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Currency:</strong></td>
+                        <td>{{ line.bank_account.currency.code }} ({{ line.bank_account.currency.name }}) {{ line.bank_account.currency.current_rate }}</td>
+                    </tr>
+                </table>
+                <h4>Bank Statement</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Reference Number:</strong></td>
+                        <td><a href="" ng-click="goToStatement(line.bank_statement.ref_no)">{{ line.bank_statement.ref_no }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ line.bank_statement.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                </table>
+                <h4 ng-if="allowManualRecon()">Manual Recon</h4>
+                <table class="table table-striped" ng-if="allowManualRecon()">
+                    <tr>
+                        <td>Account Type:</td>
+                        <td><kendo-drop-down-list style="width:100%" k-ng-model="accountType" options="accountTypeDropDownOptions"></kendo-drop-down-list></td>
+                    </tr>
+                    <tr>
+                        <td>Account:</td>
+                        <td><kendo-drop-down-list style="width:100%" k-ng-model="recon.account" options="accountDropDownOptions"></kendo-drop-down-list></td>
+                    </tr>
+                    <tr>
+                        <td>Description:</td>
+                        <td><input type="text" class="form-control" style="width:100%" ng-model="recon.description" placeholder="Description" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><a class="btn btn-primary pull-right" href="" ng-disabled="!(recon.account.acc_no && recon.description)" ng-click="doManualRecon();">Do Manual Recon</a></td>
+                    </tr>
+                    <tr><td></td><td></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row"  ng-if="selectedLine">
+            <div class="col-md-12">
+                <div class="header">
+                    <h4>Journal Entry Lines</h4>
+                </div>
+                <div class="content">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><strong>Id</strong></th>
+                                <th><strong>Name</strong></th>
+                                <th><strong>Date Created</strong></th>
+                                <th><strong>Account</strong></th>
+                                <th class="text-right"><strong>Debit</strong></th>
+                                <th class="text-right"><strong>Credit</strong></th>
+                                <th class="text-right"><strong>Account Balance</strong></th>
+                                <th><strong>State</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="line in journalEntryLines">
+                                <td><span data-toggle="tooltip" title="Ref No: {{ line.ref_no }}">{{ line.pk }}</span></td>
+                                <td>{{ line.name }}</td>
+                                <td>{{ line.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                                <td><a href="" ng-click="goToAccount(line.account_number)">{{ line.account_name }}</a></td>
+                                <td class="text-right">{{ line.debit }}</td>
+                                <td class="text-right">{{ line.credit }}</td>
+                                <td class="text-right">{{ line.account_balance }}</td>
+                                <td>{{ line.state }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+    </div>
+</div>

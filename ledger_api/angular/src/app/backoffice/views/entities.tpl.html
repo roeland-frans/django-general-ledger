@@ -1,0 +1,112 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Entity <small>{{ entity.name }}</small> <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedEntity">List Entities</a></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedEntity">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedEntity">
+            <tabset class="ui-tabs">
+                <tab heading="Information">
+                    <div class="container-fluid">
+                        <br>
+                        <div class="col-md-6">
+                            <h4>General Information</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td><strong>Entity Number:</strong></td>
+                                    <td>{{ entity.entity_no }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Entity Type:</strong></td>
+                                    <td>{{ entity.entity_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Name:</strong></td>
+                                    <td>{{ entity.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telephone:</strong></td>
+                                    <td>{{ entity.telephone }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fax:</strong></td>
+                                    <td>{{ entity.fax }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>E-Mail:</strong></td>
+                                    <td>{{ entity.email }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <address>
+                                <h4>Physical Address:</h4>
+                                {{ entity.physical_address.address }}<br>
+                                {{ entity.physical_address.suburb }}<br>
+                                {{ entity.physical_address.city }}<br>
+                                {{ entity.physical_address.province }}<br>
+                                {{ entity.physical_address.code }}<br>
+                            </address>
+                            <address>
+                                <h4>Postal Address:</h4>
+                                {{ entity.postal_address.address }}<br>
+                                {{ entity.postal_address.suburb }}<br>
+                                {{ entity.postal_address.city }}<br>
+                                {{ entity.postal_address.province }}<br>
+                                {{ entity.postal_address.code }}<br>
+                            </address>
+                        </div>
+                    </div>
+
+                    <div class="row"  ng-if="selectedEntity">
+                        <div class="col-md-12">
+                            <div class="header">
+                                <h4>Users</h4>
+                            </div>
+                            <div class="content">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                        <th><strong>User Name</strong></th>
+                                        <th><strong>First Name</strong></th>
+                                        <th><strong>Last Name</strong></th>
+                                        <th><strong>Email</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="user in users">
+                                            <td><a href="" ng-click="goToUser(user.id)">{{ user.username }}</a></td>
+                                            <td>{{ user.first_name }}</td>
+                                            <td>{{ user.last_name }}</td>
+                                            <td>{{ user.email }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </tab>
+                <tab heading="Transactions">
+                    <div class="container-fluid">
+                        <br>
+                        <h4>Transactions</h4>
+                        <kendo-grid  options="transactionGridOptions" id="grid2" name="grid2"></kendo-grid>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+</div>

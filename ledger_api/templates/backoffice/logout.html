@@ -1,0 +1,25 @@
+{% extends 'backoffice/base/base_frontend.html' %}
+
+{% block body %}
+<div id="cl-wrapper" class="login-container">
+	<div class="middle-login">
+		<div class="block-flat">
+			<div class="header">
+				<h3 class="text-center"><img class="logo-img" src="{{ STATIC_URL }}backoffice/images/tv-logo.png" alt="logo"/></h3>
+			</div>
+			<div>
+                <div class="content">
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle sign"></i> You've been successfully logged out.
+                    </div>
+                </div>
+                <div class="foot">
+                    <a class="btn btn-primary" href="{% url 'login' %}">Login Again</a>
+                </div>
+			</div>
+		</div>
+		<div class="text-center out-links"><a href="#">&copy; {% now "Y" %} TradersVault (Pty) Ltd</a></div>
+	</div>
+
+</div>
+{% endblock %}

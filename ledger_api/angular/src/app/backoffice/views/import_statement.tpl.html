@@ -1,0 +1,29 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Import Statement</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <form novalidate>
+                    <div class="form-group">
+                        <label>Internal Bank Account:</label>
+                        <kendo-drop-down-list style="width:100%" ng-model="bank.account" options="bankAccountDropDownOptions"></kendo-drop-down-list>
+                    </div>
+                    <div class="form-group">
+                        <label>Statement File:</label>
+                        <input type="file" fileread="statement.upload" />
+                    </div>
+                    <button type="submit" ng-click="submit();" ng-disabled="!statement.upload" class="btn btn-default pull-right">Submit</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

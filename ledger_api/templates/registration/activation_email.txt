@@ -1,0 +1,13 @@
+Hi,
+
+Your user name has been successfully changed.
+
+Before you can log on you need to re-activate your account.
+This activation key will expire in {{ expiration_days }} days.
+
+Please click on the following link to re-activate your user account:
+http://{{ site }}/reactivate/{{ activation_key }}
+
+
+Kind regards,
+TradersVault Team

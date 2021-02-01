@@ -1,0 +1,177 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Bank Payment Lines <small>{{ line.ref_no }}</small> <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedLine">List Payment Lines</a></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedLine">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedLine">
+            <div class="col-md-6">
+                <h4>Payment Details</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Reference Number:</strong></td>
+                        <td>{{ line.ref_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ line.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Submitted:</strong></td>
+                        <td>{{ line.date_submitted | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bank Reference:</strong></td>
+                        <td>{{ line.bank_ref }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bank Line Type:</strong></td>
+                        <td>{{ line.bank_line_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amount:</strong></td>
+                        <td>{{ line.amount }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Description:</strong></td>
+                        <td>{{ line.description }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Journal Entry:</strong></td>
+                        <td><a href="" ng-click="goToJournalEntry(line.journal_entry.ref_no)" data-toggle="tooltip" title="Ref No: {{ line.journal_entry.ref_no }}">{{ line.journal_entry.name }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ line.state }}</td>
+                    </tr>
+                    <tr ng-if="isActionDateUpdateable()">
+                        <td><strong>Action Date:</strong></td>
+                        <td ng-if="!datepickerVisible">
+                            <a href="" ng-click="makeDatepickerVisible(true)">{{ line.action_date | date:appVariables.ngDateFormat }}</a>
+                        </td>
+                        <td ng-if="datepickerVisible">
+                            <input kendo-date-picker ng-model="line.action_date" k-format="'yyyy-MM-dd'" />
+                            <button type="button" class="btn btn-primary" ng-click="updateActionDate()"><i class="fa fa-check"></i></button>
+                            <button type="button" class="btn btn-default" ng-click="makeDatepickerVisible(false)"><i class="fa fa-times"></i></button>
+                        </td>
+                    </tr>
+                    <tr ng-if="!isActionDateUpdateable()">
+                        <td><strong>Action Date:</strong></td>
+                        <td>{{ line.action_date | date:appVariables.ngDateFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error Message:</strong></td>
+                        <td>{{ line.error_message || 'None' }}</td>
+                    </tr>
+                </table>
+                <h4 ng-if="line.bank_payment_batch">Bank Payment Batch</h4>
+                <table class="table table-striped" ng-if="line.bank_payment_batch">
+                    <tr>
+                        <td><strong>Reference:</strong></td>
+                        <td><a href="" ng-click="goToPaymentBatch(line.bank_payment_batch.ref_no)">{{ line.bank_payment_batch.ref_no }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ line.bank_payment_batch.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Submitted:</strong></td>
+                        <td>{{ line.bank_payment_batch.date_submitted | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Amount:</strong></td>
+                        <td>{{ line.bank_payment_batch.total_amount }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ line.bank_payment_batch.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error Message:</strong></td>
+                        <td>{{ line.bank_payment_batch.error_message || 'None' }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h4>Entity</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Entity Number:</strong></td>
+                        <td><a href="" ng-click="goToEntity(line.dest_bank_acc.entity.id)">{{ line.dest_bank_acc.entity.entity_no }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>name:</strong></td>
+                        <td>{{ line.dest_bank_acc.entity.name }}</td>
+                    </tr>
+                </table>
+                <h4>Debit Account</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Account Number:</strong></td>
+                        <td><a href="" ng-click="goToAccount(line.debit_account.acc_no)">{{ line.debit_account.acc_no }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ line.debit_account.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Balance:</strong></td>
+                        <td>{{ line.debit_account.balance }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Available Balance:</strong></td>
+                        <td>{{ line.debit_account.available_balance }}</td>
+                    </tr>
+                </table>
+                <h4>Destination Bank Account</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Account Number:</strong></td>
+                        <td>{{ line.dest_bank_acc.acc_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ line.dest_bank_acc.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bank Name:</strong></td>
+                        <td>{{ line.dest_bank_acc.bank.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Verified Bank Name:</strong></td>
+                        <td>{{ line.dest_bank_acc.bank_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Branch:</strong></td>
+                        <td>{{ line.dest_bank_acc.bank.eft_branch_code }}</td>
+                    </tr>
+                    <tr>
+                </table>
+                <h4 ng-if="isReloadable()">Reload Payment</h4>
+                <table class="table table-striped" ng-if="isReloadable()">
+                    <tr>
+                        <td>Action Date:</td>
+                        <td><input kendo-date-picker ng-model="line.action_date" k-format="'yyyy-MM-dd'" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><a class="btn btn-primary pull-right" href="" ng-click="reloadPayment();">Reload Payment Line</a></td>
+                    </tr>
+                    <tr><td></td><td></td></tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

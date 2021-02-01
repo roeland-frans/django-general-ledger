@@ -1,0 +1,174 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>User Profile <small>{{ user_auth.username }}</small> <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedUser">List Users</a></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedUser">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedUser">
+            <tabset class="ui-tabs">
+                <tab heading="Information">
+                    <div class="container-fluid">
+                        <br>
+                        <div class="col-md-6">
+                            <h4>General Information</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td width="40%"><strong>User Name:</strong></td>
+                                    <td width="60%"><a href="" e-style="width: 100%" onbeforesave="updateUsername($data)" editable-text="user_auth.username">{{ user_auth.username || 'empty' }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>First Name:</strong></td>
+                                    <td>{{ user_auth.first_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Last Name:</strong></td>
+                                    <td>{{ user_auth.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ID Number:</strong></td>
+                                    <td><a href="" e-style="width: 100%" onbeforesave="updateIdNo($data)" editable-text="user_profile.id_no">{{ user_profile.id_no || 'empty' }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Passport Number:</strong></td>
+                                    <td><a href="" e-style="width: 100%" onbeforesave="updatePassportNo($data)" editable-text="user_profile.passport_no">{{ user_profile.passport_no || 'empty' }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Passport Country:</strong></td>
+                                    <td><a href="" e-style="width: 100%" onbeforesave="updatePassportCountry($data)" editable-text="user_profile.passport_country">{{ user_profile.passport_country || 'empty' }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Date of Birth:</strong></td>
+                                    <td>{{ user_profile.dob }}</td>
+                                </tr>
+                            </table>
+
+                            <h4>Contact Information</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td width="40%"><strong>Mobile:</strong></td>
+                                    <td width="60%">{{ user_profile.mobile }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>E-Mail:</strong></td>
+                                    <td>{{ user_auth.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email Secondary:</strong></td>
+                                    <td>{{ user_profile.email_secondary }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>User Settings</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td width="40%"><strong>Is Staff:</strong></td>
+                                    <td width="60%">{{ user_auth.is_staff }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Is Super User:</strong></td>
+                                    <td>{{ user_auth.is_superuser }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Is Active:</strong></td>
+                                    <td><a href="" onbeforesave="updateIsActive($data)" editable-checkbox="user_auth.is_active" e-title="Is Active?">{{ user_auth.is_active || 'False' }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SMS Login:</strong></td>
+                                    <td>{{ user_profile.sms_login }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>E-Mail Login:</strong></td>
+                                    <td>{{ user_profile.email_login }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SMS Critical:</strong></td>
+                                    <td>{{  user_profile.sms_critical }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>E-Mail Critical:</strong></td>
+                                    <td>{{  user_profile.email_critical }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SMS Other:</strong></td>
+                                    <td>{{  user_profile.sms_other }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>E-Mail Other:</strong></td>
+                                    <td>{{  user_profile.email_other }}</td>
+                                </tr>
+                            </table>
+
+                            <h4>Meta Information</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td width="40%"><strong>Date Joined:</strong></td>
+                                    <td width="60%">{{ user_auth.date_joined | date: appVariables.ngDatetimeFormat }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Last Login:</strong></td>
+                                    <td>{{ user_auth.last_login | date: appVariables.ngDatetimeFormat }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Call Count:</strong></td>
+                                    <td>{{ user_profile.call_count }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row"  ng-if="selectedUser">
+                        <div class="col-md-12">
+                            <div class="header">
+                                <h4>Entities</h4>
+                            </div>
+                            <div class="content">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th><strong>Entity Name</strong></th>
+                                            <th><strong>Entity Type</strong></th>
+                                            <th><strong>Telephone</strong></th>
+                                            <th><strong>Fax</strong></th>
+                                            <th><strong>Email</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="entity in entities">
+                                            <td><a href="" ng-click="goToEntity(entity.id)">{{ entity.name }}</a></td>
+                                            <td>{{ entity.entity_type }}</td>
+                                            <td>{{ entity.telephone }}</td>
+                                            <td>{{ entity.fax }}</td>
+                                            <td>{{ entity.email }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </tab>
+                <tab heading="Transactions">
+                    <div class="container-fluid">
+                        <br>
+                        <h4>Transactions</h4>
+                        <kendo-grid  options="transactionGridOptions" id="grid2" name="grid2"></kendo-grid>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+
+    </div>
+</div>

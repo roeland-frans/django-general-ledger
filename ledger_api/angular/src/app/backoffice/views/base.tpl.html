@@ -1,0 +1,17 @@
+<!-- Navigation -->
+<div ng-include="'templates/backoffice/views/partials/navbar.tpl.html'"></div>
+
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div ng-include="'templates/backoffice/views/partials/sidebar.tpl.html'"></div>
+    </div>
+
+    <!-- Content -->
+    <div data-ui-view="content" data-autoscroll="false"></div>
+
+    <span kendo-notification="notf1" id="notf1"></span>
+
+</div>

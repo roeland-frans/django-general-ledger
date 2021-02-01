@@ -1,0 +1,25 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Reconciled Lines</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-show="gridData.isGridEmpty">
+            <div class="col-md-12">
+                <div class="well">No statement lines were successfully reconciled.</div>
+            </div>
+        </div>
+
+        <div class="row" ng-show="gridData.isGridNotEmpty">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,225 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Transactions <small>{{ transaction.acc_no }}</small> <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedTransaction">List Transactions</a></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedTransaction">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedTransaction">
+            <div class="col-md-6">
+                <h4>General Information</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Ref No:</strong></td>
+                        <td>{{ transaction.ref_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Buyer Ref:</strong></td>
+                        <td>{{ transaction.buyer_ref }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Seller Ref:</strong></td>
+                        <td>{{ transaction.seller_ref }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date:</strong></td>
+                        <td>{{ transaction.start_date | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Activity:</strong></td>
+                        <td>{{ transaction.last_activity | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ transaction.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State Expiry Date:</strong></td>
+                        <td>{{ transaction.state_expiry_date | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ transaction.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Buyer Notes:</strong></td>
+                        <td>{{ transaction.buyer_notes }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Seller Notes:</strong></td>
+                        <td>{{ transaction.seller_notes }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Value:</strong></td>
+                        <td>{{ transaction.value }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fee:</strong></td>
+                        <td>{{ transaction.fee }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fee Split:</strong></td>
+                        <td>{{ transaction.fee_split }}</td>
+                    </tr>
+                </table>
+
+                <h4 ng-if="transaction.current_settlement">Current Settlement</h4>
+                <table class="table table-striped" ng-if="transaction.current_settlement">
+                    <tr>
+                        <td><strong>Ref No:</strong></td>
+                        <td>{{ transaction.current_settlement.ref_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ transaction.current_settlement.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Closed:</strong></td>
+                        <td>{{ transaction.current_settlement.date_closed | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Settlement Type:</strong></td>
+                        <td>{{ transaction.current_settlement.settlement_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ transaction.current_settlement.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Amount:</strong></td>
+                        <td>{{ transaction.current_settlement.payment_amount }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Refund Amount:</strong></td>
+                        <td>{{ transaction.current_settlement.refund_amount }}</td>
+                    </tr>
+                </table>
+
+                <h4 ng-if="transaction.current_request">Current Request</h4>
+                <table class="table table-striped" ng-if="transaction.current_request">
+                    <tr>
+                        <td><strong>Ref No:</strong></td>
+                        <td>{{ transaction.current_request.ref_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ transaction.current_request.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Closed:</strong></td>
+                        <td>{{ transaction.current_request.date_closed | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Request Type:</strong></td>
+                        <td>{{ transaction.current_request.request_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ transaction.current_request.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amount:</strong></td>
+                        <td>{{ transaction.current_request.amount }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-md-6">
+                <h4 ng-if="transaction.account">Account</h4>
+                <table class="table table-striped" ng-if="transaction.account">
+                    <tr>
+                        <td><strong>Acc No:</strong></td>
+                        <td><a href="" ng-click="goToAccount(transaction.account.acc_no)">{{ transaction.account.acc_no }} - {{ transaction.account.name }} ({{ transaction.account.available_balance }})</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ transaction.account.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accounting Type:</strong></td>
+                        <td>{{ transaction.account.accounting_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ transaction.account.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ transaction.account.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Activity:</strong></td>
+                        <td>{{ transaction.account.last_activity | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                </table>
+
+                <h4>Buyer</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Acc No:</strong></td>
+                        <td><a href="" ng-click="goToAccount(transaction.buyer.acc_no)">{{ transaction.buyer.acc_no }} - {{ transaction.buyer.name }} ({{ transaction.buyer.available_balance }})</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ transaction.buyer.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accounting Type:</strong></td>
+                        <td>{{ transaction.buyer.accounting_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ transaction.buyer.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ transaction.buyer.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Activity:</strong></td>
+                        <td>{{ transaction.buyer.last_activity | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                </table>
+
+                <h4>Seller</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <td><strong>Acc No:</strong></td>
+                        <td><a href="" ng-click="goToAccount(transaction.seller.acc_no)">{{ transaction.seller.acc_no }} - {{ transaction.seller.name }} ({{ transaction.seller.available_balance }})</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ transaction.seller.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accounting Type:</strong></td>
+                        <td>{{ transaction.seller.accounting_type }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State:</strong></td>
+                        <td>{{ transaction.seller.state }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date Created:</strong></td>
+                        <td>{{ transaction.seller.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Activity:</strong></td>
+                        <td>{{ transaction.seller.last_activity | date: appVariables.ngDatetimeFormat }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

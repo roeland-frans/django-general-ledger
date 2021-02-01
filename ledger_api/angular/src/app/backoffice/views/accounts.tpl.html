@@ -1,0 +1,87 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Account <small>{{ account.acc_no }}</small> <a class="btn btn-primary pull-right" href="" ng-click="showGrid();" ng-if="selectedAccount">List Accounts</a></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="!selectedAccount">
+            <div class="col=md-12">
+                <kendo-grid options="mainGridOptions" id="grid"></kendo-grid>
+            </div>
+        </div>
+
+        <div class="row" ng-if="selectedAccount">
+            <tabset class="ui-tabs">
+                <tab heading="Information">
+                    <div class="container-fluid">
+                        <br>
+                        <div class="col-md-6">
+                            <h4>General Information</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td><strong>Account Number:</strong></td>
+                                    <td>{{ account.acc_no }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Account Name:</strong></td>
+                                    <td>{{ account.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Date Created:</strong></td>
+                                    <td>{{ account.date_created | date: appVariables.ngDatetimeFormat }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Accounting Type:</strong></td>
+                                    <td>{{ account.accounting_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>State:</strong></td>
+                                    <td><a href="" e-style="width: 100%" onbeforesave="updateState($data)" editable-select="account.state" e-ng-options="s.value as s.text for s in states">{{ account.state }}</a></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>Balance Information</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td><strong>Available Balance:</strong></td>
+                                    <td><strong>{{ account.available_balance }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Current Balance:</strong></td>
+                                    <td>{{ account.balance }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pending Balance:</strong></td>
+                                    <td>{{ account.pending_balance }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Debit:</strong></td>
+                                    <td>{{ account.debit }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Credit:</strong></td>
+                                    <td>{{ account.credit }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="Statement">
+                    <div class="container-fluid">
+                        <br>
+                        <h4>Journal Entry Lines</h4>
+                        <kendo-grid options="statementGridOptions" id="grid"></kendo-grid>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+
+    </div>
+</div>

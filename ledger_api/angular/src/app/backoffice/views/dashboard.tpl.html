@@ -1,0 +1,291 @@
+<div id="content">
+    <div class="container-fluid">
+
+        <br>
+
+        <!-- Stats bar -->
+        <div class="row">
+            <div class="col-xs-2">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h5>TOTAL USERS</h5>
+                        <h4><b>{{ stats.total_users }}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h5>ACTIVE USERS</h5>
+                        <h4><b>{{ stats.active_users }}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h5>USERS ONLINE</h5>
+                        <h4><b>{{ stats.online_users }}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h5>USER MONEY</h5>
+                        <h4><b>{{ stats.current_liability }}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h5>TOTAL TRANS</h5>
+                        <h4><b>{{ stats.total_deals }}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h5>ACTIVE TRANS</h5>
+                        <h4><b>{{ stats.active_deals }}</b></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End stats bar -->
+
+        <div class="row">
+            <div class="col-md-12">
+                <div role=tabpanel>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#users" role="tab" data-toggle="tab">Users</a></li>
+                        <li role="presentation"><a href="#financial" role="tab" data-toggle="tab">Financial</a></li>
+                        <li role="presentation"><a href="#transactions" role="tab" data-toggle="tab">Transactions</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <!-- Users tab -->
+                        <div role="tabpanel" class="tab-pane active" id="users">
+                            <h2>Active Users</h2>
+                            <div kendo-chart
+                                k-series-defaults="{ type: 'line' }"
+                                k-series="[{name: 'Active Users', field: 'value', categoryField: 'date'}]"
+                                k-data-source="activeUsersSeries"
+                                k-category-axis="{majorGridLines: {visible: false} }"
+                                k-legend="{visible: false}"
+                                k-chart-area="{height: 200, width: chartWidth}"
+                                ></div>
+                            <h2>Daily New Users</h2>
+                            <div kendo-chart
+                                k-series-defaults="{ type: 'line' }"
+                                k-series="[{name: 'Active Users', field: 'value', categoryField: 'date'}]"
+                                k-data-source="dailyNewUsersSeries"
+                                k-category-axis="{majorGridLines: {visible: false} }"
+                                k-legend="{visible: false}"
+                                k-chart-area="{height: 200, width: chartWidth}"
+                                ></div>
+                        </div>
+
+                        <!-- Financial tab -->
+                        <div role="tabpanel" class="tab-pane" id="financial">
+                            <h2>User Money</h2>
+                            <div kendo-chart
+                                k-series-defaults="{ type: 'line' }"
+                                k-series="[{name: 'Active Users', field: 'value', categoryField: 'date'}]"
+                                k-data-source="usersMoneySeries"
+                                k-category-axis="{majorGridLines: {visible: false} }"
+                                k-legend="{visible: false}"
+                                k-chart-area="{height: 200, width: chartWidth}"
+                                ></div>
+                            <h2>Daily Fees Earned</h2>
+                            <div kendo-chart
+                                k-series-defaults="{ type: 'line' }"
+                                k-series="[{name: 'Active Users', field: 'value', categoryField: 'date'}]"
+                                k-data-source="dailyFeesEarnedSeries"
+                                k-category-axis="{majorGridLines: {visible: false} }"
+                                k-legend="{visible: false}"
+                                k-chart-area="{height: 200, width: chartWidth}"
+                                ></div>
+                            <br>
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <th>Date</th>
+                                    <th class="text-right">Transactions</th>
+                                    <th class="text-right">Fees Raised</th>
+                                    <th class="text-right">Average Fee</th>
+                                    <th class="text-right">Fees Received</th>
+                                    <th class="text-right">Fees Rate</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Last {{ stats.display_days }} Days</th>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                </tr>
+                                <tr ng-repeat="object in stats.deal_create_metrics | filter: financialFilterDays">
+                                    <td style="width:30%;">{{ object[0] }} </td>
+                                    <td class="text-right">{{ object[4] }}</td>
+                                    <td class="text-right">{{ object[6] }}</td>
+                                    <td class="text-right">{{ object[15] }}</td>
+                                    <td class="text-right">{{ object[9] }}</td>
+                                    <td class="text-right">{{ object[10] }}%</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Last {{ stats.display_months }} Months</th>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                </tr>
+                                <tr ng-repeat="object in stats.deal_create_metrics | filter: financialFilterMonth">
+                                    <td style="width:30%;">{{ object[0] }} </td>
+                                    <td class="text-right">{{ object[4] }}</td>
+                                    <td class="text-right">{{ object[6] }}</td>
+                                    <td class="text-right">{{ object[15] }}</td>
+                                    <td class="text-right">{{ object[9] }}</td>
+                                    <td class="text-right">{{ object[10] }}%</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Annually</th>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                </tr>
+                                <tr ng-repeat="object in stats.deal_create_metrics | filter: financialFilterYear">
+                                    <td style="width:30%;">{{ object[0] }} </td>
+                                    <td class="text-right">{{ object[4] }}</td>
+                                    <td class="text-right">{{ object[6] }}</td>
+                                    <td class="text-right">{{ object[15] }}</td>
+                                    <td class="text-right">{{ object[9] }}</td>
+                                    <td class="text-right">{{ object[10] }}%</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Transactions tab -->
+                        <div role="tabpanel" class="tab-pane" id="transactions">
+                            <h2>New Transactions</h2>
+                            <div kendo-chart
+                                k-series-defaults="{ type: 'line' }"
+                                k-series="[{name: 'Active Users', field: 'value', categoryField: 'date'}]"
+                                k-data-source="newTransactionsSeries"
+                                k-category-axis="{majorGridLines: {visible: false} }"
+                                k-legend="{visible: false}"
+                                k-chart-area="{height: 200, width: chartWidth}"
+                                ></div>
+                            <br>
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <th>Date</th>
+                                    <th class="text-right">Transactions</th>
+                                    <th class="text-right">Values</th>
+                                    <th class="text-right">Average Value</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Last {{ stats.display_days }} Days</th>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                </tr>
+                                <tr ng-repeat="object in stats.deal_create_metrics | filter: financialFilterDays">
+                                    <td style="width:30%;">{{ object[0] }} </td>
+                                    <td class="text-right">{{ object[4] }}</td>
+                                    <td class="text-right">{{ object[5] }}</td>
+                                    <td class="text-right">{{ object[14] }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Last {{ stats.display_months }} Months</th>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                </tr>
+                                <tr ng-repeat="object in stats.deal_create_metrics | filter: financialFilterMonth">
+                                    <td style="width:30%;">{{ object[0] }} </td>
+                                    <td class="text-right">{{ object[4] }}</td>
+                                    <td class="text-right">{{ object[5] }}</td>
+                                    <td class="text-right">{{ object[14] }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Annually</th>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                    <td class="text-left"> </td>
+                                </tr>
+                                <tr ng-repeat="object in stats.deal_create_metrics | filter: financialFilterYear">
+                                    <td style="width:30%;">{{ object[0] }} </td>
+                                    <td class="text-right">{{ object[4] }}</td>
+                                    <td class="text-right">{{ object[5] }}</td>
+                                    <td class="text-right">{{ object[14] }}</td>
+                                </tr>
+                            </table>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="header">
+                                        <h2>Transactions by State</h2>
+                                    </div>
+                                    <table class="table table-striped table-bordered">
+                                        <tr>
+                                            <th>Status</th>
+                                            <th class="text-right">Transactions</th>
+                                        </tr>
+                                        <tr ng-repeat="object in stats.deal_states">
+                                            <td>{{ object[0] }}</td>
+                                            <td class="text-right">{{ object[1] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <th class="text-right">{{ stats.total_deals }}</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="header">
+                                        <h2>Average Transactions</h2>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <p>
+                                                In the last <b>{{ stats.months_average }}</b> months, <b>{{ stats.avg_trans[0][0] }}</b>
+                                                transactions were successfully started. The average value of these
+                                                transactions were <b>{{ stats.avg_trans[0][1] }}</b> at an average fee of
+                                                <b>{{ stats.avg_trans[0][2] }}</b>.
+                                            </p>
+                                            <p>
+                                                Of these, <b>{{ stats.trans_duration[0][0] }}</b> are already completed and it
+                                                took on average <b>{{ stats.trans_duration[0][1] }}</b> days to open the transactions
+                                                and after a further <b>{{ stats.trans_duration[0][2] }}</b> days, the transactions
+                                                were completed. All in all, the average duration of transactions were
+                                                <b>{{ stats.trans_duration[0][3] }}</b> days.
+                                            </p>
+                                            <p>
+                                                These transactions used <b>{{ stats.trans_progress[0][3] }}</b> payments,
+                                                <b>{{ stats.trans_progress[0][2] }}</b> refunds and <b>{{ stats.trans_progress[0][1] }}</b>
+                                                negotiations. <b>{{ stats.trans_progress[0][13] }}%</b> of the transactions had a
+                                                single payment only and <b>{{ stats.trans_progress[0][16] }}%</b> used multiply
+                                                payments. The transaction with the most payments used
+                                                <b>{{ stats.trans_progress[0][9] }}</b> payments.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

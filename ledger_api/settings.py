@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 3rd Party apps.
+    "django_filters",
     "djmoney",
     # Ledger specific apps.
     "base",
