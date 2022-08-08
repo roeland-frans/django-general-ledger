@@ -1,3 +1,7 @@
+## Formatting
+- black: `black .`
+- isort: `isort -y`
+
 ## Setup Linux Environment
 
 ### Install System Requirements

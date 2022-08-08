@@ -1,9 +1,10 @@
-from account.constants.account import ROOT_ACC_NO
-from account.utils import get_root_account
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
-from mock import MagicMock
-from mock import patch
+from unittest.mock import MagicMock
+from unittest.mock import patch
+
+from ..constants.account import ROOT_ACC_NO
+from ..utils import get_root_account
 
 
 class GetRootAccountTestCase(TestCase):

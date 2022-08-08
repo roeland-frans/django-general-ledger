@@ -1,5 +1,6 @@
-from account.ref import BaseRef
 from unittest import TestCase
+
+from ..ref import BaseRef
 
 
 class BaseRefTestCase(TestCase):

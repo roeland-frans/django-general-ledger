@@ -1,44 +1,26 @@
-from account.constants.account import ACCOUNT_ASSET
-from account.constants.account import ACCOUNT_CAPITAL
-from account.constants.account import ACCOUNT_EXPENSE
-from account.constants.account import ACCOUNT_INCOME
-from account.constants.account import ACCOUNT_LIABILITY
-from account.constants.account import ACCOUNT_STATES_ADMIN
-from account.constants.account import ACCOUNT_TYPES_ADMIN
-from account.constants.account import BASE_CURRENCY
-from account.constants.account import CREDIT
-from account.constants.account import DEBIT
-from account.constants.account import JOURNAL_ENTRY_LINE_POSTED
-from account.constants.account import JOURNAL_ENTRY_LINE_RECONCILE
-from account.constants.account import JOURNAL_ENTRY_LINE_STATES_ADMIN
-from account.constants.account import JOURNAL_ENTRY_LINE_UNPOSTED
-from account.constants.account import JOURNAL_ENTRY_POSTED
-from account.constants.account import JOURNAL_ENTRY_STATES_ADMIN
-from account.constants.account import JOURNAL_ENTRY_UNPOSTED
-from account.constants.account import JOURNAL_TYPES_ADMIN
-from account.constants.account import RECONCILE_BANK
-from account.constants.account import RECONCILE_GENERAL
-from account.constants.account import RECONCILE_TYPES
-from account.constants.account import RECONCILE_TYPES_ADMIN
-from account.constants.account import STATE_OPEN
 from datetime import datetime
 from decimal import ROUND_HALF_EVEN
 from decimal import Decimal
 from django import dispatch
 from django.db import models
 from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from moneyed.classes import Money
 from uuid import uuid4
 
+from .constants.account import BASE_CURRENCY
+from .constants.account import AccountingType
+from .constants.account import AccountState
+from .constants.account import JournalEntryLineState
+from .constants.account import JournalEntryLineType
+from .constants.account import JournalEntryState
+from .constants.account import JournalType
+from .constants.account import ReconcileType
+
 # Custom signals
-account_credit_signal = dispatch.Signal(
-    providing_args=["account", "amount", "type", "name", "desc"]
-)
-account_debit_signal = dispatch.Signal(
-    providing_args=["account", "amount", "type", "name", "desc"]
-)
+account_credit_signal = dispatch.Signal()
+account_debit_signal = dispatch.Signal()
 
 
 def round_amount(amount):
@@ -82,19 +64,19 @@ class JournalEntryLineError(Exception):
 
 class Currency(models.Model):
     """
-    This is the system wide Currency model.
+    This is the system-wide Currency model.
     """
 
     code = models.CharField(
         _("Currency Code"),
         max_length=10,
         unique=True,
-        help_text=_("International currency code i.e. ZAR"),
+        help_text=_("International currency code i.e. USD"),
     )
     name = models.CharField(
         _("Currency Name"),
         max_length=100,
-        help_text=_("Common name of the currency i.e. Rand"),
+        help_text=_("Common name of the currency i.e. US Dollar"),
     )
     is_base = models.BooleanField(
         _("Base"),
@@ -155,7 +137,7 @@ class Currency(models.Model):
 
 class CurrencyRate(models.Model):
     """
-    This is the Currency Rate that will be for a given date.
+    Stores the currency rate for a given date time.
     """
 
     rate = models.DecimalField(
@@ -188,11 +170,11 @@ class CurrencyRate(models.Model):
 
 class AccountType(models.Model):
     """
-    This is the database model for the an account type. This type is for
+    This is the database model for an account type. This type is for
     internal use and is not be confused with the accounting type.
 
-    For example a Vault account, or Bank account, used internaly to group
-    accounts for filtering etc.
+    For example a bank account, transaction account, or user account used
+    internally to group accounts for filtering etc.
     """
 
     code = models.CharField(
@@ -212,8 +194,8 @@ class AccountType(models.Model):
 
 class Account(models.Model):
     """
-    This is the database model for the an account. An account is a financial
-    container that an entity uses for financial transactions and services. It
+    This is the database model for an account. An account is a financial
+    container that an entity uses to track financial transactions. It
     is generic in that it has a balance and associated transactions.
     """
 
@@ -229,7 +211,7 @@ class Account(models.Model):
     accounting_type = models.CharField(
         _("Account Type"),
         max_length=50,
-        choices=ACCOUNT_TYPES_ADMIN,
+        choices=AccountingType.choices,
         help_text=_(
             "Account type applicable to accounting rules i.e. "
             "asset, liability."
@@ -273,8 +255,8 @@ class Account(models.Model):
     state = models.CharField(
         _("State"),
         max_length=20,
-        choices=ACCOUNT_STATES_ADMIN,
-        default=STATE_OPEN,
+        choices=AccountState.choices,
+        default=AccountState.OPEN,
     )
     internal_type = models.ForeignKey(
         AccountType,
@@ -304,7 +286,7 @@ class Account(models.Model):
         """
         # Generate a unique account number if one does not exist.
         if not self.acc_no:
-            self.acc_no = f"A{uuid4().hex}"
+            self.acc_no = f"acc_{uuid4().hex}"
         self.last_activity = datetime.now()
         return super(Account, self).save(*args, **kwargs)
 
@@ -364,30 +346,32 @@ class Account(models.Model):
 
         tmp_balance = Money(0, self.currency.code)
 
-        # Do a select_for_update to lock the row and make sure all money fields are sync'd
+        # Do a select_for_update to lock the row and make sure all money
+        # fields are sync'd
         self.select_for_update()
 
         self.debit += debit
         self.credit += credit
 
-        if (
-            self.accounting_type == ACCOUNT_ASSET
-            or self.accounting_type == ACCOUNT_EXPENSE
+        if self.accounting_type in (
+            AccountingType.ASSET,
+            AccountingType.EXPENSE,
         ):
             tmp_balance += debit
             tmp_balance -= credit
             balance_check = self.debit - self.credit
-        elif (
-            self.accounting_type == ACCOUNT_LIABILITY
-            or self.accounting_type == ACCOUNT_INCOME
-            or self.accounting_type == ACCOUNT_CAPITAL
+        elif self.accounting_type in (
+            AccountingType.LIABILITY,
+            AccountingType.INCOME,
+            AccountingType.CAPITAL,
         ):
             tmp_balance -= debit
             tmp_balance += credit
             balance_check = self.credit - self.debit
         else:
             raise AccountError(
-                "Could not update account balance, the account has no valid accounting type."
+                "Could not update account balance, the account has no valid "
+                "accounting type."
             )
 
         self.balance += tmp_balance
@@ -395,7 +379,8 @@ class Account(models.Model):
 
         if self.balance != balance_check:
             raise AccountError(
-                "Updated balance does not match the difference between Debit/Credit on Account."
+                "Updated balance does not match the difference between "
+                "Debit/Credit on Account."
             )
 
         self.last_activity = datetime.now()
@@ -422,7 +407,8 @@ class Account(models.Model):
         # Make sure input amounts are rounded
         delta = round_amount(delta)
 
-        # Do a select_for_update to lock the row and make sure all money fields are sync'd
+        # Do a select_for_update to lock the row and make sure all money
+        # fields are sync'd
         self.select_for_update()
 
         self.last_activity = datetime.now()
@@ -435,11 +421,14 @@ class Account(models.Model):
     @transaction.atomic()
     def _update_balance_field(self, amount, balance_field, operator):
         """
-        This is a convenience method that will execute a raw SQL query to update the given balance
-        by the given amount. The actual calculation gets done by the db in a transaction which ensures the balance
+        This is a convenience method that will execute a raw SQL query to
+        update the given balance by the given amount. The actual calculation
+        gets done by the db in a transaction which ensures the balance
         is always updated using the latest balance value in the db.
+
         @param amount: The amount to update the balance by.
-        @param balance_field: The name of the balance field, this must be one of the balance field defined
+        @param balance_field: The name of the balance field, this must be one
+                              of the balance field defined
                               on the model.
         @param operator: Either a '+' or '-'.
         @returns Returns the new balance as returned by the query.
@@ -447,7 +436,7 @@ class Account(models.Model):
         # Check parameters before proceeding
         if not hasattr(self, balance_field):
             raise AccountError(
-                "Uknown balance field %s specified" % balance_field
+                "Unknown balance field %s specified" % balance_field
             )
         if operator not in ["-", "+"]:
             raise AccountError(
@@ -471,7 +460,8 @@ class Account(models.Model):
                 "Given amount must be positive to update %s." % balance_field
             )
 
-        # Do a select_for_update to lock the row and make sure all money fields are sync'd
+        # Do a select_for_update to lock the row and make sure all money
+        # fields are sync'd
         self.select_for_update()
 
         self.last_activity = datetime.now()
@@ -491,8 +481,8 @@ class Account(models.Model):
             return_balance = self.pending_balance
         else:
             raise AccountError(
-                "Given balance field %s is not supported by update_balance_field"
-                % balance_field
+                "Given balance field %s is not supported by "
+                "update_balance_field" % balance_field
             )
 
         # Write the new balance to the db
@@ -558,7 +548,7 @@ class Journal(models.Model):
     journal_type = models.CharField(
         _("Journal Type"),
         max_length=50,
-        choices=JOURNAL_TYPES_ADMIN,
+        choices=JournalType.choices,
         help_text=_(
             "Account type applicable to accounting rules i.e. sale, purchase."
         ),
@@ -618,8 +608,8 @@ class JournalEntry(models.Model):
     state = models.CharField(
         _("State"),
         max_length=64,
-        choices=JOURNAL_ENTRY_STATES_ADMIN,
-        default=JOURNAL_ENTRY_UNPOSTED,
+        choices=JournalEntryState.choices,
+        default=JournalEntryState.UNPOSTED,
     )
 
     class Meta:
@@ -644,13 +634,13 @@ class JournalEntry(models.Model):
         """
         This will return a QuerySet of all the Debit journal entries.
         """
-        return self.entry_lines.filter(line_type=DEBIT)
+        return self.entry_lines.filter(line_type=JournalEntryLineType.DEBIT)
 
     def get_credit_lines(self):
         """
         This will return a QuerySet of all the credit journal entries.
         """
-        return self.entry_lines.filter(line_type=CREDIT)
+        return self.entry_lines.filter(line_type=JournalEntryLineType.CREDIT)
 
     @transaction.atomic
     def post(self):
@@ -663,7 +653,7 @@ class JournalEntry(models.Model):
         tot_debit = Decimal(0)
         tot_credit = Decimal(0)
         entry_lines = self.entry_lines.filter(
-            state=JOURNAL_ENTRY_LINE_UNPOSTED
+            state=JournalEntryLineState.UNPOSTED
         )
 
         if entry_lines.count() <= 0:
@@ -691,7 +681,7 @@ class JournalEntry(models.Model):
         for line in entry_lines:
             line.post()
 
-        self.state = JOURNAL_ENTRY_POSTED
+        self.state = JournalEntryState.POSTED
         self.save()
 
     @transaction.atomic
@@ -712,8 +702,12 @@ class JournalEntry(models.Model):
         from_type = from_acc.accounting_type
         to_type = to_acc.accounting_type
 
-        assets = [ACCOUNT_ASSET, ACCOUNT_EXPENSE]
-        liabilities = [ACCOUNT_LIABILITY, ACCOUNT_INCOME, ACCOUNT_CAPITAL]
+        assets = (AccountingType.ASSET, AccountingType.EXPENSE)
+        liabilities = (
+            AccountingType.LIABILITY,
+            AccountingType.INCOME,
+            AccountingType.CAPITAL,
+        )
 
         if from_type in assets and to_type in assets:
             debit_acc = to_acc
@@ -794,7 +788,8 @@ class JournalEntry(models.Model):
         if not credit_desc:
             credit_desc = "'%s' credited." % credit_acc.acc_no
 
-        # Create atomic context make sure all db related changes are rolled back upon exception.
+        # Create atomic context make sure all db related changes are
+        # rolled back upon exception.
         # Exceptions will be propagated as usual.
         with transaction.atomic():
             debit_line = JournalEntryLine()
@@ -827,7 +822,7 @@ class JournalEntry(models.Model):
             debit_line.post()
             credit_line.post()
 
-            self.state = JOURNAL_ENTRY_POSTED
+            self.state = JournalEntryState.POSTED
             self.save()
 
         # Only send signals after successful commit of accounting posts
@@ -835,7 +830,7 @@ class JournalEntry(models.Model):
             sender=self.__class__,
             account=debit_acc,
             amount=debit,
-            type=DEBIT,
+            type=JournalEntryLineType.DEBIT,
             name=debit_line.name,
             desc=debit_desc,
         )
@@ -843,13 +838,16 @@ class JournalEntry(models.Model):
             sender=self.__class__,
             account=credit_acc,
             amount=credit,
-            type=CREDIT,
+            type=JournalEntryLineType.CREDIT,
             name=credit_line.name,
             desc=credit_desc,
         )
 
         if return_dict:
-            return {DEBIT: debit_line, CREDIT: credit_line}
+            return {
+                JournalEntryLineType.DEBIT: debit_line,
+                JournalEntryLineType.CREDIT: credit_line,
+            }
 
     def add_debit_line(self, debit_acc, amount, date_created, name, desc=None):
         if type(debit_acc) != Account:
@@ -922,13 +920,13 @@ class JournalEntry(models.Model):
 
         return credit_line
 
-    def reconcile_entry(self, reconcile_type=RECONCILE_GENERAL):
+    def reconcile_entry(self, reconcile_type=ReconcileType.GENERAL):
         """
         This is a convenience method to create a reconciliation for the entry's
         entry lines.
         @param reconcile_type: The type of reconciliation.
         """
-        if not reconcile_type in RECONCILE_TYPES:
+        if reconcile_type not in (ReconcileType.GENERAL, ReconcileType.BANK):
             raise AccountError(
                 "Cannot reconcile journal entry, incorrect reconcile type: %s"
                 % reconcile_type
@@ -949,7 +947,7 @@ class JournalEntry(models.Model):
         """
         This will do a bank reconciliation on the entry.
         """
-        return self.reconcile_entry(RECONCILE_BANK)
+        return self.reconcile_entry(ReconcileType.BANK)
 
 
 class JournalEntryLine(models.Model):
@@ -1020,8 +1018,8 @@ class JournalEntryLine(models.Model):
     state = models.CharField(
         _("State"),
         max_length=64,
-        choices=JOURNAL_ENTRY_LINE_STATES_ADMIN,
-        default=JOURNAL_ENTRY_LINE_UNPOSTED,
+        choices=JournalEntryLineState.choices,
+        default=JournalEntryLineState.UNPOSTED,
     )
 
     class Meta:
@@ -1038,7 +1036,7 @@ class JournalEntryLine(models.Model):
         """
         self.debit = round_amount(value)
         self.credit = Money(0, value.currency)
-        self.line_type = DEBIT
+        self.line_type = JournalEntryLineType.DEBIT
 
     def set_credit(self, value):
         """
@@ -1047,21 +1045,21 @@ class JournalEntryLine(models.Model):
         """
         self.debit = Money(0, value.currency)
         self.credit = round_amount(value)
-        self.line_type = CREDIT
+        self.line_type = JournalEntryLineType.CREDIT
 
     def post(self):
         """
-        This will attempt to post the JournalEntryLine changing it's state from
+        This will attempt to post the JournalEntryLine changing its state from
         UNPOSTED to POSTED.
         """
-        if self.state == JOURNAL_ENTRY_LINE_POSTED:
+        if self.state == JournalEntryLineState.POSTED:
             raise JournalEntryLineError("JournalEntryLine is already posted.")
 
         balance = self.account.update_balance(
             debit=self.debit, credit=self.credit
         )
         self.account_balance = balance
-        self.state = JOURNAL_ENTRY_LINE_POSTED
+        self.state = JournalEntryLineState.POSTED
 
         self.save()
 
@@ -1075,12 +1073,12 @@ class JournalEntryLine(models.Model):
             raise TypeError("Invalid Reconcile object %s" % reconcile)
 
         self.reconcile = reconcile
-        self.state = JOURNAL_ENTRY_LINE_RECONCILE
+        self.state = JournalEntryLineState.RECONCILE
         self.save()
 
     @property
     def statement_amount(self):
-        if self.line_type == DEBIT:
+        if self.line_type == JournalEntryLineType.DEBIT:
             return -1 * self.debit
         else:
             return self.credit
@@ -1097,21 +1095,23 @@ class JournalEntryLine(models.Model):
             if self.debit.amount > Decimal(
                 0
             ) and self.credit.amount == Decimal(0):
-                self.line_type = DEBIT
+                self.line_type = JournalEntryLineType.DEBIT
             elif self.debit.amount == Decimal(
                 0
             ) and self.credit.amount > Decimal(0):
-                self.line_type = CREDIT
+                self.line_type = JournalEntryLineType.CREDIT
             else:
                 raise JournalEntryLineError(
-                    "JournalEntryLine must either have a Debit value OR a Credit value greater than 0.0"
+                    "JournalEntryLine must either have a Debit value OR a "
+                    "Credit value greater than 0.0"
                 )
 
         elif self.debit.amount > Decimal(0) and self.credit.amount > Decimal(
             0
         ):
             raise JournalEntryLineError(
-                "JournalEntryLine cannot have a Debit AND Credit value that are both greater than 0.0"
+                "JournalEntryLine cannot have a Debit AND Credit value that "
+                "are both greater than 0.0"
             )
 
         return super(JournalEntryLine, self).save(*args, **kwargs)
@@ -1126,10 +1126,10 @@ class Reconcile(models.Model):
     reconcile_type = models.CharField(
         _("Reconcile Type"),
         max_length=10,
-        choices=RECONCILE_TYPES_ADMIN,
+        choices=ReconcileType.choices,
         blank=False,
         null=False,
-        default=RECONCILE_GENERAL,
+        default=ReconcileType.GENERAL,
     )
     date_created = models.DateTimeField(_("Date Created"), auto_now_add=True)
 

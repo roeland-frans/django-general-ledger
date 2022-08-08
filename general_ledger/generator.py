@@ -1,5 +1,6 @@
-from account.constants import account
 from datetime import datetime
+
+from .constants import account
 
 
 def generate():

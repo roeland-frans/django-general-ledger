@@ -1,6 +1,7 @@
-from account.constants import account
-from account.models import Account
 from django.core.exceptions import ObjectDoesNotExist
+
+from .constants import account
+from .models import Account
 
 
 def get_root_account():

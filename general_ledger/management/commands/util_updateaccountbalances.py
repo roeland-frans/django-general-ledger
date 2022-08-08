@@ -1,5 +1,5 @@
-from account.models import Account
 from django.core.management.base import BaseCommand
+from models import Account
 
 
 class Command(BaseCommand):
@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 entry.account_balance = acc.balance
                 entry.save()
                 print(
-                    "Balance=%s   Id=%s, Entry: %s, Date=%s, debit=%s, credit=%s"
+                    "Balance=%s, Id=%s, Entry: %s, Date=%s, debit=%s, credit=%s"
                     % (
                         acc.balance,
                         entry.id,

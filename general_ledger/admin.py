@@ -1,12 +1,13 @@
-from account.models import Account
-from account.models import AccountType
-from account.models import Currency
-from account.models import CurrencyRate
-from account.models import Journal
-from account.models import JournalEntry
-from account.models import JournalEntryLine
-from account.models import Reconcile
 from django.contrib import admin
+
+from .models import Account
+from .models import AccountType
+from .models import Currency
+from .models import CurrencyRate
+from .models import Journal
+from .models import JournalEntry
+from .models import JournalEntryLine
+from .models import Reconcile
 
 
 class CurrencyAdmin(admin.ModelAdmin):

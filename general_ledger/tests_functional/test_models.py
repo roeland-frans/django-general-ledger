@@ -1,21 +1,17 @@
-import threading
-
-from account.constants.account import ACCOUNT_LIABILITY
-from account.constants.account import BASE_CURRENCY
-from account.constants.account import JOURNAL_GENERAL
-from account.models import Account
-from account.models import AccountType
-from account.models import Currency
-from account.models import Journal
-from account.models import JournalEntry
+from constants.account import ACCOUNT_LIABILITY
+from constants.account import BASE_CURRENCY
+from constants.account import JOURNAL_GENERAL
 from datetime import datetime
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.db import connection
-from django.db import transaction
 from django.test import TestCase
 from django.test import TransactionTestCase
+from models import Account
+from models import AccountType
+from models import Currency
+from models import Journal
+from models import JournalEntry
 from moneyed.classes import Money
 
 
